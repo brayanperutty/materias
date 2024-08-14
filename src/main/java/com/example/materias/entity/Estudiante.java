@@ -29,6 +29,9 @@ public class Estudiante {
     @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "promedio")
+    private Float promedio;
+
     @OneToMany(mappedBy = "estudiante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Nota> notas = new HashSet<>();
