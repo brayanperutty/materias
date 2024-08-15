@@ -3,6 +3,7 @@ package com.example.materias.controller;
 
 import com.example.materias.dto.estudiante.EstudianteCreateDTO;
 import com.example.materias.dto.estudiante.EstudianteUpdateDTO;
+import com.example.materias.dto.nota.NotaPromedioDTO;
 import com.example.materias.entity.Estudiante;
 import com.example.materias.responses.estudiante.EstudianteCreateResponses;
 import com.example.materias.responses.estudiante.EstudianteUpdateResponses;
@@ -10,6 +11,8 @@ import com.example.materias.service.EstudianteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,5 +43,17 @@ public class EstudianteController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteEstudiante(@PathVariable Integer id){
         estudianteService.deleteEstudiante(id);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<Estudiante> listEstudiantes(){
+        return estudianteService.listEstudiantes();
+    }
+
+    @GetMapping(value = "/promedio")
+    @ResponseStatus(HttpStatus.OK)
+    public List<NotaPromedioDTO> listEstudiantesPromedio(){
+        return estudianteService.listAllPromedio();
     }
 }

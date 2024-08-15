@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
     private static final String MESSAGE = "mensaje";
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         errors.clear();
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -32,6 +31,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
         errors.clear();
         errors.put(MESSAGE, ex.getMessage());
@@ -39,7 +39,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
         errors.clear();
         errors.put(MESSAGE, ex.getMessage());
@@ -47,7 +46,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, String>> handleIOException(IOException ex) {
         errors.clear();
         errors.put(MESSAGE, ex.getMessage());

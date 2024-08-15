@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +33,12 @@ public class ReadExcelService {
     private final NotaSuccessfulResponse notaSuccessfulResponse;
     private final NotaErrorResponses notaErrorResponses;
 
-    public NotaSuccessfulResponse processExcelFile(MultipartFile file, Integer idMateria)throws IOException {
+    private final List<String> estudiantesNoCorrespondientes = new ArrayList<>();
 
+    public NotaSuccessfulResponse processExcelFile(MultipartFile file, Integer idMateria)throws IOException {
+        estudiantesNoCorrespondientes.clear();
+
+        NotaSuccessfulResponse respuestaTemporal = new NotaSuccessfulResponse();
 
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())){
             Sheet sheet = workbook.getSheetAt(0);
@@ -52,29 +59,63 @@ public class ReadExcelService {
                 Iterator<Cell> cellIterator = row.cellIterator();
 
                 String codigoEstudiante = cellIterator.next().getStringCellValue();
+
                 Estudiante estudiante = estudianteRepository.findByCodigo(codigoEstudiante).orElseThrow(() -> new IllegalArgumentException(estudianteErrorResponses.getNoEncontrado()));
 
                 Materia materia = materiaRepository.findById(idMateria).orElseThrow(() -> new IllegalArgumentException(materiaErrorResponse.getNoEncontrada()));
 
-                String primeraNota = cellIterator.next().getStringCellValue();
-                String segundaNota = cellIterator.next().getStringCellValue();
-                String terceraNota = cellIterator.next().getStringCellValue();
+                Optional<Nota> nota = notaRepository.findByEstudianteAndMateria(estudiante, materia);
 
-                float definitiva = (Float.parseFloat(primeraNota) + Float.parseFloat(segundaNota) + Float.parseFloat(terceraNota))/3;
-                definitiva = Math.round(definitiva * 10.0f) / 10.0f;
-                Nota nota = notaRepository.findByEstudianteAndMateria(estudiante, materia).orElseThrow(() -> new IllegalArgumentException("El estudiante " + estudiante.getNombre() + " no corresponde a la materia " + materia.getNombre() +". Verifique los demás estudiantes ingresados."));
-                nota.setEstudiante(estudiante);
-                nota.setMateria(materia);
-                nota.setPrimeraNota(Float.parseFloat(primeraNota));
-                nota.setSegundaNota(Float.parseFloat(segundaNota));
-                nota.setTerceraNota(Float.parseFloat(terceraNota));
-                nota.setDefinitiva(definitiva);
+                if(nota.isEmpty()){
+                    estudiantesNoCorrespondientes.add(estudiante.getNombre());
+                }else{
 
-                notaRepository.save(nota);
+                    Cell primeraNotaCell = cellIterator.next();
+                    float primeraNota = getFloatValueFromCell(primeraNotaCell);
+
+                    Cell segundaNotaCell = cellIterator.next();
+                    float segundaNota = getFloatValueFromCell(segundaNotaCell);
+
+                    Cell terceraNotaCell = cellIterator.next();
+                    float tercerNota = getFloatValueFromCell(terceraNotaCell);
+
+                    float definitiva = (primeraNota + segundaNota + tercerNota)/3;
+
+                    estudiante.setPromedio(notaRepository.calcularPromedio(estudiante.getId()));
+                    estudianteRepository.save(estudiante);
+
+                    definitiva = Math.round(definitiva * 10.0f) / 10.0f;
+
+                    nota.get().setEstudiante(estudiante);
+                    nota.get().setMateria(materia);
+                    nota.get().setPrimeraNota(primeraNota);
+                    nota.get().setSegundaNota(segundaNota);
+                    nota.get().setTerceraNota(tercerNota);
+                    nota.get().setDefinitiva(definitiva);
+
+                    notaRepository.save(nota.get());
+                }
             }
-            return notaSuccessfulResponse;
+
+            if(!estudiantesNoCorrespondientes.isEmpty()){
+                respuestaTemporal.setMessage(notaSuccessfulResponse.getMessage() + ". Estos estudiantes no pertenecen a la asignatura: " + estudiantesNoCorrespondientes);
+            }
+            return respuestaTemporal;
         }catch (IOException e){
             throw new IOException(notaErrorResponses.getNoLectura());
+        }
+    }
+
+    private float getFloatValueFromCell(Cell cell) {
+        try {
+            return switch (cell.getCellType()) {
+                case NUMERIC -> (float) cell.getNumericCellValue();
+                case STRING -> Float.parseFloat(cell.getStringCellValue());
+                default ->
+                        throw new IllegalArgumentException("El valor de la celda no es numérico ni un string convertible a número.");
+            };
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El valor de la celda no se puede convertir a float: " + cell.getStringCellValue(), e);
         }
     }
 }

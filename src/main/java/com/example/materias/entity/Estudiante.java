@@ -30,7 +30,7 @@ public class Estudiante {
     private String nombre;
 
     @Column(name = "promedio")
-    private Float promedio;
+    private float promedio;
 
     @OneToMany(mappedBy = "estudiante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

@@ -92,11 +92,13 @@ public class MateriasApplication {
                 estudiante = Estudiante.builder()
                         .nombre(faker.name().fullName())
                         .codigo("00" + i)
+						.promedio(0.0f)
                         .build();
             }else{
                 estudiante = Estudiante.builder()
                         .nombre(faker.name().fullName())
                         .codigo("0" + i)
+						.promedio(0.0f)
                         .build();
             }
             estudianteRepository.save(estudiante);

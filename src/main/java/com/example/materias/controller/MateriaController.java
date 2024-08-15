@@ -2,6 +2,7 @@ package com.example.materias.controller;
 
 import com.example.materias.dto.materia.MateriaCreateDTO;
 import com.example.materias.dto.materia.MateriaUpdateDTO;
+import com.example.materias.dto.nota.NotaResponseDTO;
 import com.example.materias.entity.Materia;
 import com.example.materias.responses.materia.MateriaCreateResponse;
 import com.example.materias.responses.materia.MateriaUpdateResponses;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +53,11 @@ public class MateriaController {
     @ResponseStatus(HttpStatus.OK)
     public NotaSuccessfulResponse cargarNotasMateria(@RequestParam("file") MultipartFile file, @PathVariable Integer id) throws IOException {
         return readExcelService.processExcelFile(file, id);
+    }
+
+    @GetMapping(value = "/{id}/estudiantes")
+    @ResponseStatus(HttpStatus.OK)
+    public List<NotaResponseDTO> listEstudiantesNotasByMateria(@PathVariable Integer id){
+        return materiaService.listEstudianteByMateria(id);
     }
 }
