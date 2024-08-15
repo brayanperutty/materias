@@ -1,6 +1,7 @@
 package com.example.materias.service;
 
 import com.example.materias.dto.materia.MateriaCreateDTO;
+import com.example.materias.dto.materia.MateriaListadoAllEstudiantesDTO;
 import com.example.materias.dto.materia.MateriaUpdateDTO;
 import com.example.materias.dto.nota.NotaResponseDTO;
 import com.example.materias.entity.Materia;
@@ -24,6 +25,7 @@ public class MateriaService {
     private final MateriaUpdateResponses materiaUpdateResponses;
 
     private List<NotaResponseDTO> notasEstudiantes = new ArrayList<>();
+    private List<MateriaListadoAllEstudiantesDTO> materiasEstudiantes = new ArrayList<>();
 
     public Materia getMateria(Integer id){
         return materiaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(materiaErrorResponse.getNoEncontrada()));
@@ -80,5 +82,42 @@ public class MateriaService {
                 });
 
         return notasEstudiantes;
+    }
+
+    public List<MateriaListadoAllEstudiantesDTO> listEstudiantesAllMaterias(){
+        materiasEstudiantes.clear();
+
+        materiaRepository.findAll()
+        .forEach(materia -> {
+            MateriaListadoAllEstudiantesDTO materiaListadoAllEstudiantesDTO = new MateriaListadoAllEstudiantesDTO();
+
+            materiaListadoAllEstudiantesDTO.setMateria(materia.getNombre());
+
+            List<NotaResponseDTO> estudiantes = new ArrayList<>();
+
+            materiaRepository.listEstudiantesByMateria(materia.getId())
+                    .forEach(nota -> {
+
+
+
+                        NotaResponseDTO notaResponseDTO = new NotaResponseDTO();
+                        notaResponseDTO.setNombre(nota.getNombre());
+                        notaResponseDTO.setCodigo(nota.getCodigo());
+                        notaResponseDTO.setPrimeraNota(nota.getPrimeraNota());
+                        notaResponseDTO.setSegundaNota(nota.getSegundaNota());
+                        notaResponseDTO.setTerceraNota(nota.getTerceraNota());
+                        notaResponseDTO.setDefinitiva(nota.getDefinitiva());
+
+                        estudiantes.add(notaResponseDTO);
+                        materiaListadoAllEstudiantesDTO.setEstudiantes(estudiantes);
+                    });
+
+            materiasEstudiantes.add(materiaListadoAllEstudiantesDTO);
+        });
+        return materiasEstudiantes;
+    }
+
+    public List<Materia> listMaterias(){
+        return materiaRepository.findAll();
     }
 }
