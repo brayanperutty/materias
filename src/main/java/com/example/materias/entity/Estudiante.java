@@ -13,20 +13,20 @@ import java.util.Set;
 @Entity
 @Data
 @Builder
-@Table(name = "estudiante")
+@Table(name = "estudiante", uniqueConstraints = {@UniqueConstraint(columnNames = {"codigo_estudiante"})})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Estudiante {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_estudiante")
+    @Column(name = "id_estudiante", nullable = false)
     private Integer id;
 
-    @Column(name = "codigo_estudiante")
+    @Column(name = "codigo_estudiante", nullable = false)
     private String codigo;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
     @Column(name = "promedio")

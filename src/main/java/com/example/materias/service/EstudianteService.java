@@ -1,7 +1,6 @@
 package com.example.materias.service;
 
 import com.example.materias.dto.estudiante.EstudianteCreateDTO;
-import com.example.materias.dto.estudiante.EstudianteListDTO;
 import com.example.materias.dto.estudiante.EstudianteUpdateDTO;
 import com.example.materias.dto.nota.NotaPromedioDTO;
 import com.example.materias.entity.Estudiante;
@@ -23,9 +22,6 @@ public class EstudianteService {
     private final EstudianteErrorResponses estudianteErrorResponses;
     private final EstudianteCreateResponses estudianteCreateResponses;
     private final EstudianteUpdateResponses estudianteUpdateResponses;
-
-    private List<NotaPromedioDTO> promedio = new ArrayList<>();
-    private List<EstudianteListDTO> estudiantes = new ArrayList<>();
 
     public Estudiante getEstudiante(Integer id){
         return estudianteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(estudianteErrorResponses.getNoEncontrado()));
@@ -67,7 +63,8 @@ public class EstudianteService {
     }
 
     public List<NotaPromedioDTO> listAllPromedio(){
-        promedio.clear();
+
+        List<NotaPromedioDTO> promedio = new ArrayList<>();
 
         estudianteRepository.listAllPromedio()
                 .forEach(nota -> {

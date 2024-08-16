@@ -88,20 +88,12 @@ public class MateriasApplication {
 
 		for (int i = 1; i <= 30; i++){
             Estudiante estudiante;
-			String code = i< 10 ? "00"+i : "0"+i;
-            if(i<10){
+			String code = i < 10 ? "00"+i : "0"+i;
                 estudiante = Estudiante.builder()
                         .nombre(faker.name().fullName())
-                        .codigo("00" + i)
+                        .codigo(code)
 						.promedio(0.0f)
                         .build();
-            }else{
-                estudiante = Estudiante.builder()
-                        .nombre(faker.name().fullName())
-                        .codigo("0" + i)
-						.promedio(0.0f)
-                        .build();
-            }
             estudianteRepository.save(estudiante);
         }
 	}

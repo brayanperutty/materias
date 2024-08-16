@@ -58,7 +58,7 @@ public class MateriaController {
         materiaService.deleteMateria(id);
     }
 
-    @PostMapping(value = "/{id}/cargar-notas")
+    @PostMapping(value = "/{id}/cargar")
     @ResponseStatus(HttpStatus.OK)
     public NotaSuccessfulResponse cargarNotasMateria(@RequestParam("file") MultipartFile file, @PathVariable Integer id) throws IOException {
         return readExcelService.processExcelFile(file, id);

@@ -24,9 +24,6 @@ public class MateriaService {
     private final MateriaCreateResponse materiaCreateResponse;
     private final MateriaUpdateResponses materiaUpdateResponses;
 
-    private List<NotaResponseDTO> notasEstudiantes = new ArrayList<>();
-    private List<MateriaListadoAllEstudiantesDTO> materiasEstudiantes = new ArrayList<>();
-
     public Materia getMateria(Integer id){
         return materiaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(materiaErrorResponse.getNoEncontrada()));
     }
@@ -66,7 +63,8 @@ public class MateriaService {
     }
 
     public List<NotaResponseDTO> listEstudianteByMateria(Integer idMateria){
-        notasEstudiantes.clear();
+
+        List<NotaResponseDTO> notasEstudiantes = new ArrayList<>();
 
         materiaRepository.listEstudiantesByMateria(idMateria)
                 .forEach(nota -> {
@@ -85,7 +83,8 @@ public class MateriaService {
     }
 
     public List<MateriaListadoAllEstudiantesDTO> listEstudiantesAllMaterias(){
-        materiasEstudiantes.clear();
+
+        List<MateriaListadoAllEstudiantesDTO> materiasEstudiantes = new ArrayList<>();
 
         materiaRepository.findAll()
         .forEach(materia -> {

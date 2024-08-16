@@ -40,6 +40,8 @@ public class ReadExcelService {
 
         NotaSuccessfulResponse respuestaTemporal = new NotaSuccessfulResponse();
 
+        Materia materia = materiaRepository.findById(idMateria).orElseThrow(() -> new IllegalArgumentException(materiaErrorResponse.getNoEncontrada()));
+
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())){
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -59,10 +61,7 @@ public class ReadExcelService {
                 Iterator<Cell> cellIterator = row.cellIterator();
 
                 String codigoEstudiante = cellIterator.next().getStringCellValue();
-
                 Estudiante estudiante = estudianteRepository.findByCodigo(codigoEstudiante).orElseThrow(() -> new IllegalArgumentException(estudianteErrorResponses.getNoEncontrado()));
-
-                Materia materia = materiaRepository.findById(idMateria).orElseThrow(() -> new IllegalArgumentException(materiaErrorResponse.getNoEncontrada()));
 
                 Optional<Nota> nota = notaRepository.findByEstudianteAndMateria(estudiante, materia);
 
