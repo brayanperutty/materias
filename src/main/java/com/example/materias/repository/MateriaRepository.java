@@ -19,7 +19,7 @@ public interface MateriaRepository extends JpaRepository<Materia, Integer> {
             "JOIN materia m ON m.id_materia = n.id_materia " +
             "JOIN estudiante e ON e.id_estudiante = n.id_estudiante " +
             "WHERE n.id_materia = :idMateria " +
-            "GROUP BY e.nombre, e.codigo_estudiante, n.nota_definitiva, n.id_estudiante " +
+            "GROUP BY e.nombre, e.codigo_estudiante, n.primera_nota, n.segunda_nota, n.tercera_nota, n.nota_definitiva " +
             "ORDER BY n.nota_definitiva DESC", nativeQuery = true)
     List<NotasProjection> listEstudiantesByMateria(Integer idMateria);
 }
