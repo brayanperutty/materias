@@ -98,8 +98,6 @@ public class MateriaService {
             materiaRepository.listEstudiantesByMateria(materia.getId())
                     .forEach(nota -> {
 
-
-
                         NotaResponseDTO notaResponseDTO = new NotaResponseDTO();
                         notaResponseDTO.setNombre(nota.getNombre());
                         notaResponseDTO.setCodigo(nota.getCodigo());

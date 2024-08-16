@@ -1,6 +1,5 @@
 package com.example.materias.repository;
 
-import com.example.materias.dto.projection.EstudianteProjection;
 import com.example.materias.dto.projection.PromedioProjection;
 import com.example.materias.entity.Estudiante;
 import org.springframework.data.jpa.repository.JpaRepository;

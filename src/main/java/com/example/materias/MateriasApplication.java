@@ -88,6 +88,7 @@ public class MateriasApplication {
 
 		for (int i = 1; i <= 30; i++){
             Estudiante estudiante;
+			String code = i< 10 ? "00"+i : "0"+i;
             if(i<10){
                 estudiante = Estudiante.builder()
                         .nombre(faker.name().fullName())
